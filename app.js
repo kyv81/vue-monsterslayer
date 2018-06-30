@@ -4,7 +4,8 @@ new Vue({
     playerHealth: 100,
     monsterHealth: 100,
     gameIsRunning: false,
-    turns: []
+    turns: [],
+    currentTurn: 0
   },
   methods: {
     startGame() {
@@ -14,24 +15,29 @@ new Vue({
       this.turns = [];
     },
     attack() {
-      var damage = this.calculateDamage(3, 10);
+      const damage = this.calculateDamage(3, 10);
       this.monsterHealth -= damage;
       this.turns.unshift({
         isPlayer: true,
-        text: `Players hits Monster for ${damage}`
+        text: `Player hits Monster for ${damage}`,
+        id: this.currentTurn + 1
       });
+      this.currentTurn++;
       if (this.checkWin()) {
         return;
       }
+
       this.monsterAttacks();
     },
     specialAttack() {
-      var damage = this.calculateDamage(10, 20)
+      const damage = this.calculateDamage(10, 20);
       this.monsterHealth -= damage;
       this.turns.unshift({
         isPlayer: true,
-        text: `Players hits Monster hard for ${damage}`
+        text: `Player hits Monster hard for ${damage}`,
+        id: this.currentTurn + 1
       });
+      this.currentTurn++;
       if (this.checkWin()) {
         return;
       }
@@ -45,21 +51,25 @@ new Vue({
       }
       this.turns.unshift({
         isPlayer: true,
-        text: `Players heals for 10`
+        text: 'Player heals for 10',
+        id: this.currentTurn + 1
       });
+      this.currentTurn++;
       this.monsterAttacks();
     },
     giveUp() {
       this.gameIsRunning = false;
     },
     monsterAttacks() {
-      var damage = this.calculateDamage(5, 12)
+      const damage = this.calculateDamage(5, 12);
       this.playerHealth -= damage;
       this.checkWin();
       this.turns.unshift({
         isPlayer: false,
-        text: `Monster hits Player for ${damage}`
-      })
+        text: `Monster hits Player for ${damage}`,
+        id: this.currentTurn + 1
+      });
+      this.currentTurn++;
     },
     calculateDamage(min, max) {
       return Math.max(Math.floor(Math.random() * max) + 1, min);
